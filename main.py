@@ -34,7 +34,6 @@ def take_turn(player):
     print_board()
 
 
-# Define a function to check if the game is over
 def check_game_over():
     # Check for a win
     if (board[0] == board[1] == board[2] != "-") or \
@@ -47,63 +46,23 @@ def check_game_over():
             (board[2] == board[4] == board[6] != "-"):
         return "win"
     # Check for a tie
-    elif "-" not in board:
+    elif not isMovesLeft(board):
         return "tie"
     # Game is not over
     else:
         return "play"
 
 
-def get_value_of_game(board):
-    if board[0] == board[1] == board[2] != "-":
-        if board[0] == "O":
-            return -10
-        else:
-            return 10
-
-    if board[3] == board[4] == board[5] != "-":
-        if board[3] == "O":
-            return -10
-        else:
-            return 10
-
-    if board[6] == board[7] == board[8] != "-":
-        if board[6] == "O":
-            return -10
-        else:
-            return 10
-
-    if board[0] == board[3] == board[6] != "-":
-        if board[0] == "O":
-            return -10
-        else:
-            return 10
-
-    if board[1] == board[4] == board[7] != "-":
-        if board[1] == "O":
-            return -10
-        else:
-            return 10
-
-    if board[2] == board[5] == board[8] != "-":
-        if board[2] == "O":
-            return -10
-        else:
-            return 10
-
-    if board[2] == board[4] == board[6] != "-":
-        if board[2] == "O":
-            return -10
-        else:
-            return 10
+def isMovesLeft(board):
+    for i in range(9):
+        if board[i] == "-":
+            return True
+    return False
 
 
-    # Check for a tie
-    return 0
-    # Game is not over
+# Define a function to check if the game is over
 
-
-# Define the main game loop
+# main game loop
 def play_game():
     print_board()
     current_player = computer
@@ -118,12 +77,65 @@ def play_game():
             print("It's a tie!")
             game_over = True
         else:
-            current_player = "O" if current_player == "X" else "X"
+            if current_player == "O":
+                current_player = "X"
+            else:
+                current_player = "O"
+
+
+def get_value_of_board(board):
+    if board[0] == board[1] == board[2]:
+        if board[0] == "O":
+            return -10
+        if board[0] == "X":
+            return 10
+    if board[3] == board[4] == board[5]:
+        if board[3] == "O":
+            return -10
+        if board[3] == "X":
+            return 10
+    if board[6] == board[7] == board[8]:
+        if board[6] == "O":
+            return -10
+        if board[6] == "X":
+            return 10
+
+    if board[0] == board[3] == board[6]:
+        if board[0] == "O":
+            return -10
+        if board[0] == "X":
+            return 10
+
+    if board[1] == board[4] == board[7]:
+        if board[1] == "O":
+            return -10
+        if board[1] == "X":
+            return 10
+
+    if board[2] == board[5] == board[8]:
+        if board[2] == "O":
+            return -10
+        if board[2] == "X":
+            return 10
+
+    if board[0] == board[4] == board[8]:
+        if board[0] == "O":
+            return -10
+        if board[0] == "X":
+            return 10
+
+    if board[2] == board[4] == board[6]:
+        if board[2] == "O":
+            return -10
+        if board[2] == "X":
+            return 10
+
+    return 0
 
 
 def minimax(board, depth):
-    value = get_value_of_game(board)
-    print(value)
+    value = get_value_of_board(board)
+
     if value == 10:
         return value
 
@@ -131,6 +143,7 @@ def minimax(board, depth):
         return value
 
     if not isMovesLeft(board):
+
         return 0
 
     if isMovesLeft(board):
@@ -140,15 +153,8 @@ def minimax(board, depth):
                 board[i] = computer
                 best_val = max(best_val, minimax(board, depth + 1))
                 board[i] = "-"
+
         return best_val
-
-
-def isMovesLeft(board):
-    for i in range(9):
-
-        if board[i] == "-":
-            return True
-    return False
 
 
 def findBestMove(board):
@@ -164,10 +170,11 @@ def findBestMove(board):
             board[i] = "-"
 
             if value > bestVal:
+
                 bestMove = i
                 bestVal = value
 
-    print(bestMove)
+
     return bestMove
 
 
