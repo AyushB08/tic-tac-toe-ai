@@ -15,8 +15,10 @@ def print_board():
 
 
 # Define a function to handle a player's turn
+
 def take_turn(player):
     print(player + "'s turn.")
+    print()
     if player == "O":
 
         position = input("Choose a position from 1-9: ")
@@ -26,6 +28,7 @@ def take_turn(player):
         while board[position] != "-":
             position = int(input("Position already taken. Choose a different position: ")) - 1
         board[position] = player
+        print()
 
     else:
         position = findBestMove(board)
@@ -65,8 +68,10 @@ def isMovesLeft(board):
 # main game loop
 def play_game():
     print_board()
+
     current_player = computer
     game_over = False
+
     while not game_over:
         take_turn(current_player)
         game_result = check_game_over()
@@ -133,26 +138,39 @@ def get_value_of_board(board):
     return 0
 
 
-def minimax(board, depth):
+
+def minimax(board, depth, isComputerPlaying):
     value = get_value_of_board(board)
 
-    if value == 10:
-        return value
-
-    if value == -10:
+    if value == 10 or value == -10:
         return value
 
     if not isMovesLeft(board):
-
         return 0
 
     if isMovesLeft(board):
-        best_val = -100
-        for i in range(9):
-            if board[i] == "-":
-                board[i] = computer
-                best_val = max(best_val, minimax(board, depth + 1))
-                board[i] = "-"
+        if isComputerPlaying:
+            #print("WENT HERE X")
+
+            best_val = -100
+            for i in range(9):
+                if board[i] == "-":
+
+                    board[i] = computer
+                    #print("BEFORE X: " + str(i) + ": " + str(best_val))
+                    best_val = max(best_val, minimax(board, depth + 1, not isComputerPlaying)) - depth
+                    #print("AFTER X: " + str(i) + ": " + str(best_val))
+                    board[i] = "-"
+
+        else:
+            best_val = 100
+            for i in range(9):
+                if board[i] == "-":
+                    board[i] = "O"
+                    #("BEFORE O: " + str(i) + ": " + str(best_val))
+                    best_val = min(best_val, minimax(board, depth + 1, not isComputerPlaying)) + depth
+                    #print("AFTER O: " + str(i) + ": " + str(best_val))
+                    board[i] = "-"
 
         return best_val
 
@@ -166,15 +184,15 @@ def findBestMove(board):
 
         if board[i] == "-":
             board[i] = "X"
-            value = minimax(board, 0)
+            value = minimax(board, 0, False)
+            #print("BEST MOVE " + str(i) + " " + str(value))
             board[i] = "-"
 
             if value > bestVal:
-
                 bestMove = i
                 bestVal = value
 
-
+    #print("BEST MOVE: " + str(bestMove))
     return bestMove
 
 
