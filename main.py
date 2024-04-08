@@ -138,8 +138,7 @@ def get_value_of_board(board):
     return 0
 
 
-
-def minimax(board, depth, isComputerPlaying):
+def minimax(board, depth, isComputerPlaying, alpha, beta):
     value = get_value_of_board(board)
 
     if value == 10 or value == -10:
@@ -148,35 +147,39 @@ def minimax(board, depth, isComputerPlaying):
     if not isMovesLeft(board):
         return 0
 
-    if isMovesLeft(board):
-        if isComputerPlaying:
-            #print("WENT HERE X")
+    if isComputerPlaying:
 
-            best_val = -100
-            for i in range(9):
-                if board[i] == "-":
 
-                    board[i] = computer
-                    #print("BEFORE X: " + str(i) + ": " + str(best_val))
-                    best_val = max(best_val, minimax(board, depth + 1, not isComputerPlaying)) - depth
-                    #print("AFTER X: " + str(i) + ": " + str(best_val))
-                    board[i] = "-"
+        best_val = -10
+        for i in range(9):
+            if board[i] == "-":
+                board[i] = computer
 
-        else:
-            best_val = 100
-            for i in range(9):
-                if board[i] == "-":
-                    board[i] = "O"
-                    #("BEFORE O: " + str(i) + ": " + str(best_val))
-                    best_val = min(best_val, minimax(board, depth + 1, not isComputerPlaying)) + depth
-                    #print("AFTER O: " + str(i) + ": " + str(best_val))
-                    board[i] = "-"
+                best_val = max(best_val, minimax(board, depth + 1, not isComputerPlaying, alpha, beta) - depth)
+                board[i] = "-"
+                alpha = max(alpha, best_val)
+                if beta <= alpha:
+                    break
 
-        return best_val
+
+
+
+    else:
+        best_val = 10
+        for i in range(9):
+            if board[i] == "-":
+                board[i] = "O"
+                best_val = min(best_val, minimax(board, depth + 1, not isComputerPlaying, alpha, beta) + depth)
+                board[i] = "-"
+                beta = min(beta, best_val)
+                if beta <= alpha:
+                    break
+    return best_val
 
 
 def findBestMove(board):
-    bestVal = -1000
+
+    bestVal = -10
 
     bestMove = 0
 
@@ -184,17 +187,13 @@ def findBestMove(board):
 
         if board[i] == "-":
             board[i] = "X"
-            value = minimax(board, 0, False)
-            #print("BEST MOVE " + str(i) + " " + str(value))
+            value = minimax(board, 0, False, -1000, 1000)
             board[i] = "-"
-
             if value > bestVal:
                 bestMove = i
                 bestVal = value
 
-    #print("BEST MOVE: " + str(bestMove))
     return bestMove
 
 
-# Start the game
 play_game()
